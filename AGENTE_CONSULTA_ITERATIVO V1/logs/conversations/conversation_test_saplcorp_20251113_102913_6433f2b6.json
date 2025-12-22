@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2025-11-13T10:29:35.957548",
+    "session_id": "test_saplcorp_20251113_102913_6433f2b6",
+    "user_input": "busca ficherso que tengan la palabra Planificación en el título",
+    "llm_response": "<present_answer>\nNo se encontraron archivos con la palabra \"Planificación\" en el título dentro de la base de conocimiento de saplcorplcorp.\n\nEsto podría deberse a:\n\n• Los archivos pueden estar nombrados con términos alternativos como \"Plan\", \"Programación\", \"Scheduling\", \"Previsión\" u otros sinónimos\n• La palabra podría estar en el contenido de los documentos pero no en sus títulos\n• Los archivos podrían usar abreviaturas o términos en inglés\n\n¿Te gustaría que:\n\n→ Realice una búsqueda semántica más amplia sobre planificación y temas relacionados?\n→ Busque archivos con términos alternativos como \"Plan\", \"Programación\" o \"Scheduling\"?\n→ Realice una búsqueda en el contenido completo de los documentos (no solo títulos)?\n</present_answer>\n\n<sources>[\"search:lexical_search\"]</sources>\n\n<confidence>high</confidence>",
+    "metrics": {
+      "total_time_ms": 7061.062812805176,
+      "llm_time_ms": 6163.613319396973,
+      "tools_time_ms": 893.9390182495117,
+      "tokens_input": 29118,
+      "tokens_output": 450,
+      "cache_tokens_saved": 0,
+      "tools_executed": 1,
+      "tools_successful": 1,
+      "iterations": 2
+    },
+    "request_metadata": {}
+  }
+]

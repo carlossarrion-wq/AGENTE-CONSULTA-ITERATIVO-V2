@@ -1,0 +1,199 @@
+RESUMEN DEL DOCUMENTO: output
+================================================================================
+
+PARTE 1:
+--------------------------------------------------------------------------------
+# RESUMEN EJECUTIVO: DOCUMENTACIÓN DE AUTENTICACIÓN Y REGISTRO - PLATAFORMA NATURGY
+
+## DESCRIPCIÓN GENERAL
+
+Este documento funcional describe los procesos de autenticación (login) y registro de usuarios en la plataforma de Naturgy, diferenciando entre dos divisiones principales: Naturgy Clientes (Newco) y Naturgy Iberia (NI). El documento establece los flujos operativos, validaciones de seguridad y gestión de datos para tres tipos de clientes: NI exclusivo, Newco exclusivo y mixto (con contratos en ambas divisiones). Incluye diagramas de flujo detallados, casos de uso específicos y procedimientos de validación de identidad mediante múltiples métodos.
+
+## PUNTOS CLAVE
+
+- **Tres tipos de login**: NI (Área Clientes), Newco (Omega) y Mixto (selector de plataforma)
+- **Validación de identidad dual**: Documento de identidad + verificación bancaria o de facturación
+- **Autoregistro automático**: El sistema registra automáticamente usuarios cuando contratan servicios en una nueva división
+- **Confirmación por email obligatoria**: Todo registro requiere validación mediante enlace de confirmación
+- **Recuperación de datos desde sistemas transaccionales**: Siebel para NI y Salesforce para Newco
+
+## TEMAS PRINCIPALES
+
+**Proceso de Login**
+Acceso mediante NIF y contraseña en https://omega.naturgy.es/. El sistema valida credenciales, verifica pertenencia a usuario registrado y determina tipo de cliente (NI, Newco o Mixto) para dirigir al panel correspondiente. Errores de autenticación muestran mensaje genérico sin especificar si el error es en usuario o contraseña.
+
+**Registro de Cliente NI**
+Proceso de tres pasos: (1) Identificación mediante NIF/NIE/Pasaporte + validación bancaria (últimos 4 dígitos IBAN, importe de facturas o tarjeta Naturgy), (2) Datos de contacto recuperados de Siebel (editables), (3) Creación de contraseña segura. Requiere confirmación por email desde respuesta@naturgy.es.
+
+**Registro de Cliente Newco**
+Idéntico al proceso NI pero con datos recuperados de Salesforce y confirmación desde Omega. Validaciones de seguridad y métodos de verificación son equivalentes.
+
+**Clientes Mixtos**
+Usuarios con contratos en ambas divisiones visualizan pantalla dropdown para seleccionar entre Área Clientes (NI) u Omega (Newco). El sistema gestiona automáticamente el autoregistro cuando un cliente contrata servicios en una nueva división.
+
+**Pre-registro**
+Sistema de invitación por email que autocompletea datos del cliente desde sistemas transaccionales, reduciendo fricción en el registro. Diferencia entre clientes nuevos y existentes.
+
+## INFORMACIÓN TÉCNICA RELEVANTE
+
+**Sistemas Transaccionales**
+- Siebel: Sistema transaccional para NI (recupera datos de contacto)
+- Salesforce: Sistema transaccional para Newco (recupera datos de contacto)
+- Heroku: Copia de Salesforce para desarrollo/testing
+
+**Plataformas Frontales**
+- Omega: Portal de Newco (https://omega.naturgy.es/)
+- AC NI: Área Clientes de NI (portal legacy)
+
+**Métodos de Validación de Identidad**
+- Domiciliación: Últimos 4 dígitos IBAN
+- Transferencia: Importe de 3 últimas facturas o Código CUO
+- Tarjeta Naturgy: 6 dígitos intermedios o CUO
+
+**Flujos de Datos**
+Datos de contacto se guardan localmente durante registro pero se actualizan en sistemas transaccionales (Siebel/Salesforce) solo tras confirmación de email. Email se valida para evitar duplicados en el sistema.
+
+## ENTIDADES Y CONCEPTOS MENCIONADOS
+
+**Divisiones de Negocio**
+- NC/Newco: Naturgy Clientes
+- NI/Imperial: Naturgy Iberia
+
+**Sistemas y Herramientas**
+- NAPAPI: API para acceso a datos de contratos y facturas
+- CLM: Generador de documentos PDF
+- AVIVA: Plataforma de firma digital
+- ALISYS/ADDON PAYMENT: Pasarelas de pago
+- Sharepoint: Gestión documental
+
+**Conceptos de Negocio**
+- SEPA: Zona de cobros y pagos transfronterizos
+- CUO: Código de usuario para identificación alternativa
+- Autoregistro: Registro automático al contratar servicios en nueva división
+
+PARTE 2:
+--------------------------------------------------------------------------------
+# RESUMEN EJECUTIVO
+
+## DESCRIPCIÓN GENERAL
+
+Este documento técnico describe los procesos y funcionalidades del portal de autoservicio Omega de Naturgy, una plataforma digital que permite a los clientes gestionar sus contratos de suministro energético (luz y gas). Cubre operaciones esenciales como modificación de autoconsumo, selección de fechas de pago, descarga de contratos, cambios de producto, gestión de facturas, consulta de consumos y trámites administrativos. El documento incluye diagramas de flujo detallados, interfaces de usuario y especificaciones técnicas de integración con sistemas backend como Salesforce, SAP, Heroku y AVIVA.
+
+La plataforma implementa procesos complejos de validación, firma digital y sincronización entre múltiples sistemas para garantizar la integridad de los datos contractuales y el cumplimiento normativo en operaciones de cambio de titularidad, modificación de productos y gestión de reclamaciones.
+
+## PUNTOS CLAVE
+
+- El portal Omega centraliza todas las operaciones de autoservicio del cliente, eliminando necesidad de contacto directo con agentes para trámites rutinarios
+- Los procesos críticos (cambio de titular, cambio de producto) incluyen validaciones de identidad, firma digital mediante AVIVA y sincronización con SAP
+- El sistema diferencia entre usuarios con "bypass" activo (sin firma digital requerida) y usuarios estándar (con firma digital obligatoria)
+- La plataforma integra múltiples sistemas backend: Salesforce para CRM, SAP para contabilidad, Heroku para datos de marketing/precios, AVIVA para firma digital
+- Mulesoft actúa como orquestador de integración, propagando eventos entre Salesforce y SAP con monitoreo de errores
+
+## TEMAS PRINCIPALES
+
+• **Gestión de Autoconsumo**: Solicitud de modificación de autoconsumo con almacenamiento de documentos en SharePoint, generación de solicitudes de contratación e inicio de proceso de switching
+
+• **Selección de Día de Pago**: Interfaz que permite elegir ventanas de 6 días mensuales para emisión de facturas, con actualización automática de ciclos de facturación
+
+• **Cambio de Producto**: Flujo de 4 pasos que incluye recuperación de precios desde Heroku, confirmación de datos, firma digital condicional y envío a SAP
+
+• **Gestión de Facturas**: Descarga de facturas en PDF y reclamación de facturas con especificación de motivos (lectura errónea, cobro incorrecto, no recepción)
+
+• **Consulta de Consumos**: Panel visual con gráficos comparativos de consumo mensual desglosado por franjas horarias (punta, llano, valle) y tabla de últimas lecturas facturadas
+
+• **Cambio de Titular**: Proceso de 4 pasos con validación de cliente Naturgy, usuario Omega, información contractual, datos bancarios y confirmación. Incluye decisión de subrogación (asumir o no deudas previas)
+
+• **Gestiones Administrativas**: Solicitudes de asistencia técnica, reclamaciones de servicios, cambio de datos de acceso, contacto y correspondencia
+
+• **Integración Salesforce-SAP**: Sincronización mediante Mulesoft de eventos contractuales con monitoreo de errores y feedback de fallos
+
+## INFORMACIÓN TÉCNICA RELEVANTE
+
+**Procesos de Firma Digital**: Controlados por AVIVA. Se requieren cuando bypass está inactivo. Documentos firmados se guardan en SharePoint y se envían a Salesforce. Bypass se activa manualmente por agentes según evaluación de caso.
+
+**Flujo de Switching**: Proceso crítico para cambios de producto y titularidad. Requiere validación de ambas peticiones antes de activar contrato. Para contratos multi-producto (luz+gas), se envían peticiones separadas al switching.
+
+**Validaciones Críticas**: 
+- Verificación de cliente Naturgy y usuario Omega
+- Comprobación de contratos activos sin solicitudes pendientes
+- Validación de impagos (facturas o partidas pendientes)
+- Confirmación de datos contractuales correctos
+
+**Almacenamiento de Documentos**: SharePoint centraliza archivos adjuntos, contratos firmados y documentación de gestiones. Accesible mediante botón "Descargar documentación" en casos de gestión.
+
+**Endpoints API**: Múltiples solicitudes de escritura documentadas para cada operación, con dependencias específicas de sistemas (Salesforce, SAP, Heroku, AVIVA, Sharepoint, Cognito).
+
+## ENTIDADES Y CONCEPTOS MENCIONADOS
+
+**Sistemas Principales**: Omega (portal), Salesforce (CRM), SAP (ERP), Heroku (datos marketing), AVIVA (firma digital), Mulesoft (integración), SharePoint (documentos), Cognito (autenticación)
+
+**Procesos Clave**: Switching, subrogación, bypass, firma digital, sincronización, validación de impagos
+
+**Actores**: Cliente usuario, cliente Naturgy, agente, Salesforce, SAP, Mulesoft
+
+**Documentos**: Contratos, facturas, reclamaciones, casos de gestión, documentación contractual
+
+**Productos**: Luz, gas, tarifas planas, tarifa por uso, servicios asociados (servigas, servielectric)
+
+PARTE 3:
+--------------------------------------------------------------------------------
+RESUMEN EJECUTIVO: FLUJO DE VALIDACIÓN DE DIRECCIONES EN SISTEMA DARWIN
+
+DESCRIPCIÓN GENERAL
+
+Este documento describe un flujo de proceso automatizado implementado en el sistema Darwin para la validación y normalización de direcciones de correspondencia. El proceso está diseñado para garantizar la integridad de los datos direccionales mediante verificaciones secuenciales de componentes clave. El sistema recibe direcciones normalizadas del usuario y ejecuta una serie de validaciones que confirman la existencia de identificadores únicos y claves geográficas antes de completar el registro o devolver errores específicos.
+
+El flujo implementa un modelo de validación en cascada donde cada paso depende del anterior, asegurando que solo se procesen direcciones con todos los componentes requeridos. Este enfoque reduce errores en la base de datos y mejora la calidad de los datos de correspondencia en toda la organización.
+
+PUNTOS CLAVE
+
+- El sistema valida la existencia del UUID de dirección como primer paso crítico en el proceso
+- Se implementan tres puntos de decisión secuenciales para verificar identificadores verticales y horizontales
+- El proceso genera automáticamente UIDs de claves cuando es necesario, optimizando la creación de registros
+- Los errores se devuelven de manera específica cuando falta algún componente requerido
+- La arquitectura permite tanto la validación como la creación de nuevas claves en un único flujo
+
+TEMAS PRINCIPALES
+
+• Validación de Identificadores de Vía (idVia): Verifica la existencia del identificador único de la vía antes de proceder con validaciones adicionales. Este es el primer filtro crítico que determina si la dirección base es válida en el sistema.
+
+• Validación de Claves Verticales: Confirma la existencia de componentes verticales de la dirección como piso, escalera y puerta. Estos elementos son esenciales para identificar ubicaciones específicas dentro de edificios multifamiliares.
+
+• Validación de Claves Horizontales: Verifica componentes horizontales como número de vía y otros identificadores de ubicación horizontal. Estos datos son fundamentales para la localización geográfica precisa.
+
+• Generación Automática de UIDs: Cuando las claves no existen, el sistema crea automáticamente los UIDs correspondientes en lugar de rechazar la solicitud, mejorando la eficiencia operativa.
+
+INFORMACIÓN TÉCNICA RELEVANTE
+
+El flujo de validación opera mediante una estructura de nodos conectados que representan decisiones binarias (SÍ/NO). La transición entre nodos está condicionada por las respuestas a preguntas específicas sobre la existencia de componentes direccionales.
+
+Los tres puntos de decisión principales son:
+
+1. Nodo n4: ¿Existe el idVia? - Determina si el identificador de vía está registrado en el sistema
+2. Nodo n6: ¿Existe la clave vertical correspondiente? - Valida componentes verticales de la dirección
+3. Nodo n8: ¿Existe la clave horizontal correspondiente? - Valida componentes horizontales de la dirección
+
+El proceso maneja respuestas negativas creando registros nuevos en lugar de fallar, lo que permite que el sistema sea resiliente y adaptable a nuevas direcciones no previamente registradas.
+
+ENTIDADES Y CONCEPTOS MENCIONADOS
+
+Sistema Darwin: Plataforma de gestión que implementa este flujo de validación de direcciones.
+
+Componentes de Dirección:
+- DIRECCIÓN: Identificador general de la ubicación
+- IDVIA: Identificador único de la vía
+- NÚMERO: Número de la vía
+- PISO: Nivel vertical del inmueble
+- ESCALERA: Identificador de escalera en edificios multifamiliares
+- PUERTA: Identificador específico de la puerta
+- PORTA: Variante de identificador de puerta
+
+Identificadores Técnicos:
+- UUID: Identificador único universal de dirección
+- UID: Identificador único de claves específicas
+- Códigos de referencia: "1225665", "3", "BJ" (ejemplos de identificadores en el sistema)
+
+El documento evidencia un sistema robusto de validación que equilibra la verificación de integridad con la flexibilidad para incorporar nuevas direcciones, optimizando tanto la calidad de datos como la experiencia operativa.
+
+================================================================================
+Fin del resumen de output

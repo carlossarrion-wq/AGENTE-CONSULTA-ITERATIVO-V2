@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2025-11-05T00:30:43.594235",
+    "session_id": "fadsfa_darwin_20251105_002858_369375eb",
+    "user_input": "explicame en detalle el doc FD-Darwin_Funcional0_v3.0.pdf",
+    "llm_response": "<present_answer>\n\n## ⚠️ Limitación en la Indexación del Documento\n\nLamento informarte que el documento **FD-Darwin_Funcional0_v3.0.pdf** presenta un problema en su indexación dentro de la base de conocimiento. El archivo fue procesado principalmente como **contenido visual (imágenes)** en lugar de texto extractable, lo que impide acceder a los detalles textuales completos del documento.\n\n### 📋 Lo que Sabemos del Documento\n\nBasándome en los metadatos disponibles:\n\n| Aspecto | Información |\n|---------|-------------|\n| **Nombre** | FD-Darwin_Funcional0_v3.0.pdf |\n| **Tamaño** | 10.4 MB |\n| **Tipo** | Especificación de Diseño Funcional |\n| **Versión** | 3.0 |\n| **Contenido** | Plantilla de especificación funcional para el sistema DARWIN |\n| **Formato** | Principalmente diagramas, flujos, interfaces y esquemas visuales |\n\n### 🎯 Contenido Esperado\n\nEste tipo de documento de especificación funcional (FD) típicamente incluye:\n\n- ✅ **Responsables y Ownership** - Equipos y personas responsables\n- ✅ **Descripción General** - Propósito y alcance del sistema\n- ✅ **Módulos y Funcionalidades** - Desglose de características principales\n- ✅ **Flujos de Proceso** - Diagramas de flujo de negocio\n- ✅ **Interfaces de Usuario** - Mockups y capturas de pantalla\n- ✅ **Integraciones** - Conexiones con otros sistemas\n- ✅ **Requisitos Funcionales** - Especificaciones detalladas\n- ✅ **Casos de Uso** - Escenarios de utilización\n\n### 💡 Recomendaciones\n\nPara obtener información detallada sobre Darwin, te sugiero:\n\n1. **Consultar documentos alternativos** disponibles en la base de conocimiento:\n   - `FD-Darwin_Funcional0_v3.0.pdf` (este documento, con limitaciones)\n   - Otros documentos funcionales y técnicos sobre Darwin\n\n2. **Buscar información específica** sobre módulos concretos:\n   - Gestión de usuarios y permisos\n   - Procesos de contratación\n   - Integración con sistemas transaccionales\n   - Monitorización y dashboards\n\n3. **Preguntar sobre aspectos específicos** como:\n   - \"¿Cuál es la arquitectura de Darwin?\"\n   - \"¿Cómo funciona el flujo de pedidos en Darwin?\"\n   - \"¿Qué módulos tiene Darwin?\"\n\n### 📞 Alternativa\n\nSi necesitas acceso al contenido completo y detallado de este documento, te recomiendo:\n- Descargar el PDF directamente desde el repositorio de documentación\n- Contactar con el equipo de Delivery Portales (responsable del documento según los metadatos)\n- Solicitar una versión en formato texto o Word que sea más fácil de indexar\n\n</present_answer>\n\n<sources>[\"FD-Darwin_Funcional0_v3.0.pdf (metadatos)\"]</sources>\n\n<confidence>medium</confidence>\n\n<suggestions>\n1. Pregunta sobre un aspecto específico de Darwin que necesites entender\n2. Consulta otros documentos funcionales disponibles en la base de conocimiento\n3. Busca información sobre módulos concretos (usuarios, pedidos, integraciones, etc.)\n</suggestions>",
+    "metrics": {
+      "total_time_ms": 88314.27478790283,
+      "llm_time_ms": 22935.864686965942,
+      "tools_time_ms": 65369.8468208313,
+      "tokens_input": 150729,
+      "tokens_output": 1803,
+      "cache_tokens_saved": 0,
+      "tools_executed": 4,
+      "tools_successful": 4,
+      "iterations": 5
+    },
+    "request_metadata": {}
+  }
+]

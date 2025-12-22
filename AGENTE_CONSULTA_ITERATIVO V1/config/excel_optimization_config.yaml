@@ -1,0 +1,108 @@
+# Configuración de Optimización de Excel
+# Este archivo define los parámetros para la optimización automática de archivos Excel
+
+excel_optimization:
+  # Activar/desactivar optimización automática
+  enabled: true
+  
+  # Umbrales para activar la optimización
+  thresholds:
+    # Tamaño mínimo de archivo en MB para activar optimización
+    size_threshold_mb: 1
+    # Número mínimo de filas totales para activar optimización
+    row_threshold: 2000
+    # Número mínimo de filas por hoja para activar optimización
+    sheet_row_threshold: 1000
+  
+  # Configuración de procesamiento por lotes
+  batch_processing:
+    # Tamaño de lote para procesamiento (filas por lote)
+    batch_size: 5000
+    # Tamaño máximo de filas por chunk semántico
+    max_rows_per_chunk: 200
+    # Tamaño mínimo de filas por chunk semántico
+    min_rows_per_chunk: 50
+  
+  # Configuración por tamaño de archivo
+  size_based_config:
+    small_files:  # < 1MB
+      batch_size: 500
+      max_rows_per_chunk: 25
+      min_rows_per_chunk: 5
+    
+    medium_files:  # 1MB - 10MB
+      batch_size: 1000
+      max_rows_per_chunk: 50
+      min_rows_per_chunk: 10
+    
+    large_files:  # > 10MB
+      batch_size: 10000
+      max_rows_per_chunk: 500
+      min_rows_per_chunk: 100
+  
+  # Configuración de preservación de estructura
+  structure_preservation:
+    # Incluir headers en cada chunk
+    include_headers_in_chunks: true
+    # Preservar formato de tabla
+    preserve_table_structure: true
+    # Extraer códigos técnicos automáticamente
+    extract_technical_codes: true
+  
+  # Configuración de metadatos
+  metadata_enrichment:
+    # Incluir información de posición (hoja, rango de filas)
+    include_position_info: true
+    # Incluir estadísticas de chunk (filas, columnas, celdas llenas)
+    include_chunk_stats: true
+    # Incluir análisis de tipos de datos
+    include_data_type_analysis: true
+
+# Configuración específica por aplicación
+applications:
+  mulesoft:
+    excel_optimization:
+      enabled: true
+      batch_size: 1000
+      max_rows_per_chunk: 50
+      size_threshold_mb: 0.5  # Más agresivo para MuleSoft
+  
+  sap:
+    excel_optimization:
+      enabled: true
+      batch_size: 1500
+      max_rows_per_chunk: 75
+      size_threshold_mb: 2  # Menos agresivo para SAP
+  
+  darwin:
+    excel_optimization:
+      enabled: true
+      batch_size: 800
+      max_rows_per_chunk: 40
+      size_threshold_mb: 1
+  
+  deltasmile:
+    excel_optimization:
+      enabled: true
+      batch_size: 1200
+      max_rows_per_chunk: 60
+      size_threshold_mb: 1.5
+  
+  saplcorp:
+    excel_optimization:
+      enabled: true
+      batch_size: 8000
+      max_rows_per_chunk: 300
+      size_threshold_mb: 1.0  # Procesamiento agresivo para saplcorp
+
+# Configuración de logging para optimización
+logging:
+  excel_optimization:
+    # Nivel de logging para optimización (DEBUG, INFO, WARNING, ERROR)
+    level: INFO
+    # Mostrar estadísticas detalladas
+    show_detailed_stats: true
+    # Mostrar progreso para archivos grandes
+    show_progress: true
+    # Umbral de filas para mostrar progreso
+    progress_threshold: 5000

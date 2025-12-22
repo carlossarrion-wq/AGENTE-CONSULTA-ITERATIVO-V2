@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2025-11-05T00:59:38.945388",
+    "session_id": "fadsfa_darwin_20251105_005819_8125e324",
+    "user_input": "dame dtalle del proceso CREACIÓN DE PEDIDOS Y SCORING",
+    "llm_response": "<thinking>\nSigo recibiendo contenido sobre validación de datos del titular, pero no el contenido específico sobre \"Creación de pedidos y Scoring\". Los chunks 8-12 no parecen contener la información que necesito.\n\nVoy a intentar una búsqueda semántica para encontrar contenido relacionado con el proceso de creación de pedidos y evaluación de scoring.\n</thinking>\n\n<tool_semantic_search>\n<query>proceso creación pedido evaluación scoring rechazado aprobado</query>\n<top_k>10</top_k>\n<min_score>0.1</min_score>\n</tool_semantic_search>",
+    "metrics": {
+      "total_time_ms": 76623.8579750061,
+      "llm_time_ms": 32713.813304901123,
+      "tools_time_ms": 43883.24546813965,
+      "tokens_input": 291555,
+      "tokens_output": 2303,
+      "cache_tokens_saved": 0,
+      "tools_executed": 10,
+      "tools_successful": 10,
+      "iterations": 10
+    },
+    "request_metadata": {}
+  }
+]
