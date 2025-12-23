@@ -36,9 +36,9 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
 
 - **Modernizar la arquitectura** mediante Strands y Bedrock Agent Core
 - **Mejorar la extensibilidad** con herramientas como servicios MCP
-- **Fortalecer la seguridad** con autenticación IAM y autorización granular
+- **Fortalecer y estandarizar la seguridad** con autenticación IAM y autorización granular
 - **Optimizar el acceso a información** con 8 herramientas especializadas
-- **Mantener compatibilidad** con sistema multi-aplicación existente
+- **Mantener** capacidad multi-aplicación existente
 - **Mejorar la trazabilidad** con registro completo en RDS PostgreSQL
 
 ### 1.3 Alcance del Proyecto
@@ -55,6 +55,7 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
 - Streaming y prompt caching
 - Upload de archivos e imágenes en conversaciones
 - Export y copy de conversaciones
+- Feedback de usuario (Like/Dislike tracking)
 
 #### ❌ FUERA DEL ALCANCE
 
@@ -76,9 +77,10 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
 | **Autorización** | Básica | Granular (app + módulo) |
 | **Trazabilidad** | Logs + JSON | RDS PostgreSQL completo |
 | **Upload Files** | No | Sí (docs + imágenes) |
-| **Export** | No | Sí (TXT, MD, JSON) |
+| **Export/Copy** | No | Sí (TXT, MD, JSON + Copy) |
+| **Feedback** | No | Sí (Like/Dislike tracking) |
 | **Streaming** | Básico | Nativo con Strands |
-| **Prompt Caching** | No | Sí (Haiku 4.5) |
+| **Prompt Caching** | Sí (Haiku 4.5) | Sí (Haiku 4.5) |
 
 ---
 
@@ -128,17 +130,17 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
                              │
         ┌────────────────────┼────────────────────┐
         │                    │                    │
-┌───────▼────────┐  ┌────────▼────────┐  ┌───────▼────────┐
-│  Search MCP    │  │  Document MCP   │  │  Utility MCP   │
-│  Server        │  │  Server         │  │  Server        │
-│  (Port 3000)   │  │  (Port 3001)    │  │  (Port 3002)   │
-│                │  │                 │  │                │
-│ • lexical      │  │ • file_section  │  │ • regex        │
-│ • semantic     │  │ • file_content  │  │ • get_doc_list │
-│ • hybrid       │  │                 │  │                │
-│ • structure    │  │                 │  │                │
-└───────┬────────┘  └────────┬────────┘  └───────┬────────┘
-        │                    │                    │
+┌───────▼────────┐  ┌────────▼────────┐
+│  Search MCP    │  │  Document MCP   │
+│  Server        │  │  Server         │
+│  (Port 3000)   │  │  (Port 3001)    │
+│                │  │                 │
+│ • lexical      │  │ • file_section  │
+│ • semantic     │  │ • file_content  │
+│ • hybrid       │  │ • structure     │
+│ • regex        │  │ • get_doc_list  │
+└───────┬────────┘  └────────┬────────┘
+        │                    │
         └────────────────────┼────────────────────┘
                              │
         ┌────────────────────┼────────────────────┐
@@ -146,8 +148,8 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
 ┌───────▼────────┐  ┌────────▼────────┐  ┌───────▼────────┐
 │  OpenSearch    │  │      S3         │  │   RDS MySQL    │
 │  (Vectores +   │  │  - documents/   │  │  (Trazabilidad)│
-│   Léxico)      │  │  - Markdowns/   │  │                │
-│                │  │  - HaikuSummary/│  │                │
+│   Léxico)      │  │  - markdowns/   │  │                │
+│                │  │  - summaries/   │  │                │
 │                │  │  - structures/  │  │                │
 │                │  │  - snapshot/    │  │                │
 └────────────────┘  └─────────────────┘  └────────────────┘
@@ -188,21 +190,19 @@ Esta versión incorpora mejoras arquitectónicas fundamentales, incluyendo la mi
    - tool_lexical_search
    - tool_semantic_search
    - tool_hybrid_search
+   - tool_regex_search
 
 2. **Document MCP Server** (Port 3001)
    - tool_file_section
    - tool_file_content
    - tool_structure
-
-3. **Utility MCP Server** (Port 3002)
-   - tool_regex_search
    - tool_get_document_list
 
 #### 2.2.3 Capa de Datos
 
 **OpenSearch**:
 - Índices por aplicación: `rag-documents-{app_name}`
-- Vectores de 1024 dimensiones (Titan Embed Image V1)
+- Vectores de 384 dimensiones (Titan Embed Text V1)
 - Búsqueda léxica (BM25) y semántica (KNN)
 
 **S3**:
@@ -1438,8 +1438,8 @@ opensearch:
   index_pattern: rag-documents-{app_name}
   
 embedding:
-  model: amazon.titan-embed-image-v1
-  dimensions: 1024
+  model: amazon.titan-embed-text-v1
+  dimensions: 384
   
 search:
   default_top_k: 10
